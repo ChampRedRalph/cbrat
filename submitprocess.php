@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     }
 
     // Create the SQL query dynamically to insert the answers
-    $sql = "INSERT INTO tb_answers (schoolid, studname, gradelevel, subject";
+    $sql = "INSERT INTO tb_answers_cbrat (schoolid, studname, gradelevel, subject";
     
     // Add dynamic answer fields (a1 to aN)
     for ($i = 1; $i <= $maxAnswers; $i++) {

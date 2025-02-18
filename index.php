@@ -7,7 +7,7 @@
 include '../adminquarterlyassessment/roxcon.php';
 
 // Fetch school data from the database
-$query = "SELECT schoolid, `name` FROM school where quarter = 3";
+$query = "SELECT schoolid, `name` FROM school where quarter = 5";
 $result = $conn->query($query);
 
 
@@ -28,7 +28,7 @@ $selected_grade = isset($_GET['grade']) ? $_GET['grade'] : '';
 <html>
 
     <head>
-        <title>Regional Unified Quarterly Assessment</title>
+        <title>Computer Based Regional Assessment Test</title>
         <script>
             document.addEventListener("contextmenu", function (event) {
                 event.preventDefault();
@@ -298,9 +298,8 @@ $selected_grade = isset($_GET['grade']) ? $_GET['grade'] : '';
         <div class="container">
             <div class="right">
                 <div class="header">
-                    <h1>Regional Unified Quarterly Assessment</h1>
+                    <h1>Computer Based Regional Assessment Test</h1>
                     <div class="logo">
-                        <img src="./assets/matatag.png" alt="matatag" class="matatag">
                         <img src="./assets/depedlogo.png" alt="deped10logo">
                         <img src="./assets/ict.png" alt="ictlogo">
                     </div>
@@ -322,17 +321,9 @@ $selected_grade = isset($_GET['grade']) ? $_GET['grade'] : '';
                         <label for="grade">Grade Level:</label>
                         <select id="grade" name="grade" required onchange="checkGrade()" required>
                         <option value="" disabled <?php echo $selected_grade == '' ? 'selected' : ''; ?>>Select grade</option>
-                        <option value="1" <?php echo $selected_grade == '1' ? 'selected' : ''; ?>>Grade 1</option>
-                        <option value="2" <?php echo $selected_grade == '2' ? 'selected' : ''; ?>>Grade 2</option>
                         <option value="3" <?php echo $selected_grade == '3' ? 'selected' : ''; ?>>Grade 3</option>
-                        <option value="4" <?php echo $selected_grade == '4' ? 'selected' : ''; ?>>Grade 4</option>
-                        <option value="5" <?php echo $selected_grade == '5' ? 'selected' : ''; ?>>Grade 5</option>
                         <option value="6" <?php echo $selected_grade == '6' ? 'selected' : ''; ?>>Grade 6</option>
-                        <option value="7" <?php echo $selected_grade == '7' ? 'selected' : ''; ?>>Grade 7</option>
-                        <option value="8" <?php echo $selected_grade == '8' ? 'selected' : ''; ?>>Grade 8</option>
-                        <option value="9" <?php echo $selected_grade == '9' ? 'selected' : ''; ?>>Grade 9</option>
                         <option value="10" <?php echo $selected_grade == '10' ? 'selected' : ''; ?>>Grade 10</option>
-                        <option value="11" <?php echo $selected_grade == '11' ? 'selected' : ''; ?>>Grade 11</option>
                         <option value="12" <?php //echo $selected_grade == '12' ? 'selected' : ''; ?>>Grade 12</option>
                         </select>
 
@@ -387,7 +378,7 @@ $subjects = [];
 // Check if a grade has been selected
 if ($selected_grade) {
     // Prepare the SQL query to fetch subjects based on the selected grade
-    $sql = "SELECT `subject`,`file` FROM subjects WHERE `file` IS NOT NULL and gradelevel = ?";
+    $sql = "SELECT `subject`,`file` FROM subjects WHERE `file` IS NOT NULL and gradelevel = ? and quarter = 5";
     
     // Prepare and execute the statement
     if ($stmt = $conn->prepare($sql)) {
@@ -461,12 +452,10 @@ if ($selected_grade) {
                             // var maxRadioButtonCount = (gradelevel === 3 || gradelevel === 6) ? 30 : 45;
                             var maxRadioButtonCount;
 
-                            if (gradelevel >= 1 && gradelevel <= 3) {
-                                maxRadioButtonCount = 30;
-                            } else if (gradelevel >= 4 && gradelevel <= 6) {
-                                maxRadioButtonCount = 40;
-                            } else if (gradelevel >= 7 && gradelevel <= 12) {
-                                maxRadioButtonCount = 50;
+                            if (gradelevel >= 3 && gradelevel <= 6) {
+                                maxRadioButtonCount = 45;
+                            } else if (gradelevel >= 10 && gradelevel <= 12) {
+                                maxRadioButtonCount = 60;
                             } else {
                                 maxRadioButtonCount = 0; // Default or fallback value if grade level is not in the range
                             }
