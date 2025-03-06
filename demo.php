@@ -1,25 +1,6 @@
 <!DOCTYPE html>
 <!--&copy; 2024 ICT Unit, Department of Education Region 10. All rights reserved.-->
 
-<?php
-// Include the database connection file
-// header('Location: https://r10.deped.gov.ph');exit();
-include '../adminquarterlyassessment/roxcon.php';
-
-// Fetch school data from the database
-$query = "SELECT schoolid, `name` FROM school where quarter = 5";
-$result = $conn->query($query);
-
-
-// Close the database connection
-//$conn->close();
-?>
-
-<?php
-// Get the selected grade level from the URL, if available
-$selected_grade = isset($_GET['grade']) ? $_GET['grade'] : '';
-?>
-
 <script src="assets/jszip.min.js"></script>
 <script src="assets/zip-full.min.js"></script>
 <script src="assets/rox-min.js"></script>
@@ -28,7 +9,7 @@ $selected_grade = isset($_GET['grade']) ? $_GET['grade'] : '';
 <html>
 
     <head>
-        <title>Computer Based Regional Assessment Test</title>
+        <title>CBRAT/RUQA Demo</title>
         <script>
             document.addEventListener("contextmenu", function (event) {
                 event.preventDefault();
@@ -319,12 +300,12 @@ $selected_grade = isset($_GET['grade']) ? $_GET['grade'] : '';
                     <div class="detailsContainer">
 
                         <label for="grade">Grade Level:</label>
-                        <select id="grade" name="grade" required onchange="checkGrade()" required>
-                        <option value="" disabled <?php echo $selected_grade == '' ? 'selected' : ''; ?>>Select grade</option>
-                        <option value="3" <?php echo $selected_grade == '3' ? 'selected' : ''; ?>>Grade 3</option>
-                        <option value="6" <?php echo $selected_grade == '6' ? 'selected' : ''; ?>>Grade 6</option>
-                        <option value="10" <?php echo $selected_grade == '10' ? 'selected' : ''; ?>>Grade 10</option>
-                        <option value="12" <?php //echo $selected_grade == '12' ? 'selected' : ''; ?>>Grade 12</option>
+                        <select id="grade" name="grade" required >
+                            <option value="" disabled>Select grade</option>
+                            <option value="3">Grade 3</option>
+                            <option value="6">Grade 6</option>
+                            <option value="10">Grade 10</option>
+                            <option value="12">Grade 12</option>
                         </select>
 
                         <label for="schoolid">School ID:</label>
@@ -531,116 +512,7 @@ if ($selected_grade) {
 
 
 
-        <script>
-            function submitForm() {
-                // Get the form data
-                const schoolid = document.getElementById('schoolid').value;
-                //const lrn = document.getElementById('lrn').value;
-                var iname = document.getElementById('name').value;
-                var name = iname.replace(/,/g, '');
-                const subject = document.getElementById('subject').value;
-                let csv = '';
-                if (schoolid.length === 0) {
-                    alert('Please select school.');
-                    return;
-                }
-                // Check if at least one radio button is checked
-                let radioChecked = false;
-                if (gradelevel == 3 || gradelevel == 6) {
-                    for (let i = 1; i <= 30; i++) {
-                        if (document.querySelector(`input[name="question${i}"]:checked`)) {
-                            radioChecked = true;
-                            break;
-                        }
-                    }
-                } else if (gradelevel == 10 || gradelevel == 12) {
-                    for (let i = 1; i <= 45; i++) {
-                        if (document.querySelector(`input[name="question${i}"]:checked`)) {
-                            radioChecked = true;
-                            break;
-                        }
-                    }
-                }
 
-                // If no radio button is checked, display an alert and return
-                if (!radioChecked) {
-                    alert('Please answer at least one question before submitting.');
-                    return;
-                }
-
-                // Create CSV based on grade level
-                if (gradelevel == 3 || gradelevel == 6) {
-                    const questionValues = [];
-                    for (let i = 1; i <= 30; i++) {
-                        const questionValue = document.querySelector(`input[name="question${i}"]:checked`);
-                        if (questionValue) {
-                            questionValues.push(questionValue.value);
-                        }
-                    }
-                    //csv = `${schoolid},${lrn},${name},${subject},`;
-                    csv = `${schoolid},${name},${subject},`;
-                    for (let i = 0; i < questionValues.length; i++) {
-                        csv += questionValues[i];
-                        if (i !== questionValues.length - 1) {
-                            csv += ',';
-                        }
-                    }
-                } else if (gradelevel == 10 || gradelevel == 12) {
-                    const questionValues = [];
-                    for (let i = 1; i <= 45; i++) {
-                        const questionValue = document.querySelector(`input[name="question${i}"]:checked`);
-                        if (questionValue) {
-                            questionValues.push(questionValue.value);
-                        }
-                    }
-                    // csv = `${schoolid},${lrn},${name},${subject},`;
-                    csv = `${schoolid},${name},${subject},`;
-                    for (let i = 0; i < questionValues.length; i++) {
-                        csv += questionValues[i];
-                        if (i !== questionValues.length - 1) {
-                            csv += ',';
-                        }
-                    }
-                }
-
-                // Create a new blob with the CSV data
-                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-
-                // Create a link element to download the file
-                // const filename = `${schoolid}-${lrn}-${subject}.rox`;
-                const filename = `${schoolid}-${subject}.rox`;
-                const link = document.createElement("a");
-                link.setAttribute("href", URL.createObjectURL(blob));
-                link.setAttribute("download", filename);
-                link.style.display = "none";
-
-                // Add the link element to the document and click it
-                document.body.appendChild(link);
-                link.click();
-
-                // Clean up
-                document.body.removeChild(link);
-
-		 alert("Submission Is Complete");
-                // Reload the page
-                location.reload();
-            }
-
-            function properCase(string) {
-                var sentence = string.toLowerCase().split(" ");
-                for (var i = 0; i < sentence.length; i++) {
-                    sentence[i] = sentence[i][0].toUpperCase() + sentence[i].slice(1);
-                }
-                return sentence.join(" ");
-            }
-            
-           
-            document.addEventListener('contextmenu', function (event) {
-                event.preventDefault();
-            });
-
-
-        </script>
 
 
     </body>
