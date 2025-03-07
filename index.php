@@ -4,6 +4,22 @@
 <?php
 // Include the database connection file
 // header('Location: https://r10.deped.gov.ph');exit();
+
+// Include the database connection file
+include '../adminquarterlyassessment/roxcon.php';
+
+// Check the status in tb_settings where id = 1
+$status_query = "SELECT `status` FROM tb_settings WHERE id = 1";
+$status_result = $conn->query($status_query);
+
+if ($status_result->num_rows > 0) {
+    $status_row = $status_result->fetch_assoc();
+    if ($status_row['status'] == 0) {
+        header('Location: https://r10.deped.gov.ph');
+        exit();
+    }
+}
+
 include '../adminquarterlyassessment/roxcon.php';
 
 // Fetch school data from the database
