@@ -279,7 +279,7 @@
         <div class="container">
             <div class="right">
                 <div class="header">
-                    <h1>Computer Based Regional Assessment Test</h1>
+                    <h1>CBRAT/RUQA Demo Site</h1>
                     <div class="logo">
                         <img src="./assets/depedlogo.png" alt="deped10logo">
                         <img src="./assets/ict.png" alt="ictlogo">
@@ -309,90 +309,31 @@
                         </select>
 
                         <label for="schoolid">School ID:</label>
-                        <!--input type="number" id="schoolid" name="schoolid" placeholder="128060" maxlength="6" required /--!>
-                        <?php 
-                        
-                        if ($result->num_rows > 0) {
-    echo '<select name="schoolid" class="form-control" required>';
-    echo '<option value="">Select School</option>';
-
-    // Loop through the result set and populate the combo box
-    while ($row = $result->fetch_assoc()) {
-        $schoolid = $row['schoolid'];
-        $name = $row['name'];
-
-        echo '<option value="' . htmlspecialchars($schoolid) . '">' . htmlspecialchars($name) . '</option>';
-    }
-
-    echo '</select>';
-} else {
-    echo '<select name="schoolid" class="form-control" required>';
-    echo '<option value="">No schools available</option>';
-    echo '</select>';
-}
-
-?>
+                        <select id="schoolid" name="schoolid" required>
+                            <option value="" disabled selected>Select School</option>
+                            <option value="A">School A</option>
+                            <option value="B">School B</option>
+                            <option value="C">School C</option>
+                            <option value="D">School D</option>
+                            <option value="E">School E</option>
+                            <option value="F">School F</option>
+                            <option value="G">School G</option>
+                            <option value="H">School H</option>
+                        </select>
                         <label for="name">Full Name:</label>
                         <input type="text" id="name" name="name" placeholder="Juan dela Cruz" required />
-
-
-                       
-
-
-
-
-
                         <label for="subject">Subject:</label>
-                        <!-- <select id="subject" name="subject" required>
-                            <option value="" selected disabled>Select subject</option>
-
-                        </select> -->
-
-                        <?php
-// Include database connection
-
-// Get the selected grade from the URL
-$selected_grade = isset($_GET['grade']) ? $_GET['grade'] : null;
-
-// Initialize an empty subjects array
-$subjects = [];
-// Check if a grade has been selected
-if ($selected_grade) {
-    // Prepare the SQL query to fetch subjects based on the selected grade
-    $sql = "SELECT `subject`,`file` FROM subjects WHERE `file` IS NOT NULL and gradelevel = ? and quarter = 5";
-    
-    // Prepare and execute the statement
-    if ($stmt = $conn->prepare($sql)) {
-        $stmt->bind_param('i', $selected_grade); // Bind gradelevel as an integer
-        $stmt->execute();
-        $result = $stmt->get_result();
-        
-        // Fetch the results into the $subjects array
-        while ($row = $result->fetch_assoc()) {
-            $subjects[] = [
-                'subject' => $row['subject'],
-                'file' => $row['file']
-            ];
-        }
-        $stmt->close();
-    }
-}
-
-?>
-
-<!-- HTML Dropdown for Subjects -->
-<select id="subject" name="subject" required>
-    <option value="" selected disabled>Select subject</option>
-    <?php
-    if (!empty($subjects)) {
-        foreach ($subjects as $subject) {
-            echo "<option value='" . htmlspecialchars($subject['file']) . "'>" . htmlspecialchars($subject['subject']) . "</option>";
-        }
-    } else {
-        echo "<option value='' disabled>No subjects available</option>";
-    }
-    ?>
-</select>
+                            <select id="subject" name="subject" required>
+                                <option value="" selected disabled>Select subject</option>
+                                <option value="math">Mathematics</option>
+                                <option value="science">Science</option>
+                                <option value="english">English</option>
+                                <option value="filipino">Filipino</option>
+                                <option value="ap">Araling Panlipunan</option>
+                                <option value="esp">Edukasyon sa Pagpapakatao</option>
+                                <option value="mapeh">Music, Arts, PE, and Health</option>
+                                <option value="tle">Technology and Livelihood Education</option>
+                            </select>
 
 
                     </div>
@@ -491,7 +432,7 @@ if ($selected_grade) {
                             var grade = document.getElementById('grade').value; // Get the selected grade
                             // console.log(grade);
                             // var selectedValue = "questionnaire/grade_" + grade + "/" + select.value + ".pdf";
-                            var selectedValue = "../adminquarterlyassessment/questionaire/"+select.value;
+                            var selectedValue = "../CBRAT/demo_questionaire.pdf";
                             console.log(selectedValue);
 
                             // Set the PDF viewer data and href attributes to the selected subject
@@ -503,7 +444,7 @@ if ($selected_grade) {
                     </script>
                     <!-- // TODO: Submit to database -->
                     <!-- <button type="submit" onclick="submitForm()">Submit</button> -->
-                    <button type="submit" >Submit</button>
+                    <button type="button" onclick="location.reload();">Submit</button>
                 </form>
 
             </div>
