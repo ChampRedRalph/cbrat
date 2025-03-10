@@ -9,7 +9,7 @@
 include '../adminquarterlyassessment/roxcon.php';
 
 // Check the status in tb_settings where id = 1
-$status_query = "SELECT `status` FROM tb_settings WHERE id = 1";
+$status_query = "SELECT `status` FROM tb_settings WHERE id = 1"; 
 $status_result = $conn->query($status_query);
 
 if ($status_result->num_rows > 0) {
