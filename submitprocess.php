@@ -13,9 +13,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     if ($gradelevel >= 1 && $gradelevel <= 3) {
         $maxAnswers = 30;
     } elseif ($gradelevel >= 4 && $gradelevel <= 6) {
-        $maxAnswers = 40;
+        $maxAnswers =60;
     } else {
-        $maxAnswers = 50;
+        $maxAnswers = 70;
     }
 
     // Prepare an array to store answers
