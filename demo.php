@@ -436,7 +436,7 @@
                             console.log(selectedValue);
 
                             // Set the PDF viewer data and href attributes to the selected subject
-                            pdfViewer.setAttribute("data", selectedValue);
+                            pdfViewer.setAttribute("data", selectedValue + "#toolbar=0&navpanes=0&scrollbar=0");
                             pdfViewer.querySelector("a").setAttribute("href", selectedValue);
                             generateRadioButtons(grade);
                         });

@@ -3,13 +3,12 @@
 
 <?php
 // Include the database connection file
-// header('Location: https://r10.deped.gov.ph');exit();
 
 // Include the database connection file
 include '../adminquarterlyassessment/roxcon.php';
 
 // Check the status in tb_settings where id = 1
-$status_query = "SELECT `status` FROM tb_settings WHERE id = 1"; 
+$status_query = "SELECT `status` FROM tb_settings WHERE id = 1";
 $status_result = $conn->query($status_query);
 
 if ($status_result->num_rows > 0) {
@@ -26,6 +25,15 @@ include '../adminquarterlyassessment/roxcon.php';
 $query = "SELECT schoolid, `name` FROM school where quarter = 5";
 $result = $conn->query($query);
 
+$subjects_query = "SELECT gradelevel, `subject`, `file` FROM subjects WHERE QUARTER = 4";
+$subjects_result = $conn->query($subjects_query);
+
+$subjects = [];
+if ($subjects_result->num_rows > 0) {
+    while ($row = $subjects_result->fetch_assoc()) {
+        $subjects[] = $row;
+    }
+}
 
 // Close the database connection
 //$conn->close();
@@ -314,7 +322,7 @@ $selected_grade = isset($_GET['grade']) ? $_GET['grade'] : '';
         <div class="container">
             <div class="right">
                 <div class="header">
-                    <h1>Computer Based Regional Assessment Test</h1>
+                    <h1>2025 Computer Based Regional Assessment Test</h1>
                     <div class="logo">
                         <img src="./assets/depedlogo.png" alt="deped10logo">
                         <img src="./assets/ict.png" alt="ictlogo">
@@ -334,48 +342,47 @@ $selected_grade = isset($_GET['grade']) ? $_GET['grade'] : '';
                 
                     <div class="detailsContainer">
 
-                        <label for="grade">Grade Level:</label>
-                        <select id="grade" name="grade" required onchange="checkGrade()" required>
-                        <option value="" disabled <?php echo $selected_grade == '' ? 'selected' : ''; ?>>Select grade</option>
-                        <option value="3" <?php echo $selected_grade == '3' ? 'selected' : ''; ?>>Grade 3</option>
-                        <option value="6" <?php echo $selected_grade == '6' ? 'selected' : ''; ?>>Grade 6</option>
-                        <option value="10" <?php echo $selected_grade == '10' ? 'selected' : ''; ?>>Grade 10</option>
-                        <option value="12" <?php //echo $selected_grade == '12' ? 'selected' : ''; ?>>Grade 12</option>
-                        </select>
-
                         <label for="schoolid">School ID:</label>
-                        <!--input type="number" id="schoolid" name="schoolid" placeholder="128060" maxlength="6" required /--!>
+                        <!-- input type="number" id="schoolid" name="schoolid" placeholder="128060" maxlength="6" required -->
                         <?php 
                         
                         if ($result->num_rows > 0) {
-    echo '<select name="schoolid" class="form-control" required>';
-    echo '<option value="">Select School</option>';
+                        echo '<select name="schoolid" class="form-control" required>';
+                        echo '<option value="">Select School</option>';
 
-    // Loop through the result set and populate the combo box
-    while ($row = $result->fetch_assoc()) {
-        $schoolid = $row['schoolid'];
-        $name = $row['name'];
+                        // Loop through the result set and populate the combo box
+                        while ($row = $result->fetch_assoc()) {
+                            $schoolid = $row['schoolid'];
+                            $name = $row['name'];
 
-        echo '<option value="' . htmlspecialchars($schoolid) . '">' . htmlspecialchars($name) . '</option>';
-    }
+                            echo '<option value="' . htmlspecialchars($schoolid) . '">' . htmlspecialchars($name) . '</option>';
+                        }
 
-    echo '</select>';
-} else {
-    echo '<select name="schoolid" class="form-control" required>';
-    echo '<option value="">No schools available</option>';
-    echo '</select>';
-}
-
-?>
+                        echo '</select>';
+                         } else {
+                        echo '<select name="schoolid" class="form-control" required>';
+                        echo '<option value="">No schools available</option>';
+                        echo '</select>';
+                         }
+                        ?>
                         <label for="name">Full Name:</label>
                         <input type="text" id="name" name="name" placeholder="Juan dela Cruz" required />
 
+                        <label for="grade">Grade Level:</label>
+                        <select id="grade" name="grade" required onchange="checkGrade()">
+                            <option value="" selected>Select grade</option>
+                            <option value="3" <?php echo $selected_grade == '3' ? 'selected' : ''; ?>>Grade 3</option>
+                            <option value="6" <?php echo $selected_grade == '6' ? 'selected' : ''; ?>>Grade 6</option>
+                            <option value="10" <?php echo $selected_grade == '10' ? 'selected' : ''; ?>>Grade 10</option>
+                            <option value="12" <?php echo $selected_grade == '12' ? 'selected' : ''; ?>>Grade 12</option>
+                        </select>
 
-                       
-
-
-
-
+                        <div id="verificationInput" style="display: none;">
+                            <label for="verificationCode">Verification Code:</label>
+                            <input type="text" id="verificationCode" name="verificationCode" required>
+                            <button type="button" onclick="verifyCode()">Verify</button>
+                        </div>
+                        
 
                         <label for="subject">Subject:</label>
                         <!-- <select id="subject" name="subject" required>
@@ -383,85 +390,110 @@ $selected_grade = isset($_GET['grade']) ? $_GET['grade'] : '';
 
                         </select> -->
 
-                        <?php
-// Include database connection
 
-// Get the selected grade from the URL
-$selected_grade = isset($_GET['grade']) ? $_GET['grade'] : null;
 
-// Initialize an empty subjects array
-$subjects = [];
-// Check if a grade has been selected
-if ($selected_grade) {
-    // Prepare the SQL query to fetch subjects based on the selected grade
-    $sql = "SELECT `subject`,`file` FROM subjects WHERE `file` IS NOT NULL and gradelevel = ? and quarter = 5";
-    
-    // Prepare and execute the statement
-    if ($stmt = $conn->prepare($sql)) {
-        $stmt->bind_param('i', $selected_grade); // Bind gradelevel as an integer
-        $stmt->execute();
-        $result = $stmt->get_result();
-        
-        // Fetch the results into the $subjects array
-        while ($row = $result->fetch_assoc()) {
-            $subjects[] = [
-                'subject' => $row['subject'],
-                'file' => $row['file']
-            ];
-        }
-        $stmt->close();
-    }
-}
-
-?>
-
-<!-- HTML Dropdown for Subjects -->
-<select id="subject" name="subject" required>
-    <option value="" selected disabled>Select subject</option>
-    <?php
-    if (!empty($subjects)) {
-        foreach ($subjects as $subject) {
-            echo "<option value='" . htmlspecialchars($subject['file']) . "'>" . htmlspecialchars($subject['subject']) . "</option>";
-        }
-    } else {
-        echo "<option value='' disabled>No subjects available</option>";
-    }
-    ?>
-</select>
+                        <!-- HTML Dropdown for Subjects -->
+                        <select id="subject" name="subject" required>
+                            <option value="" selected disabled>Select subject</option>
+                            <?php
+                            //if (!empty($subjects)) {
+                            //    foreach ($subjects as $subject) {
+                            //        echo "<option value='" . htmlspecialchars($subject['file']) . "'>" . htmlspecialchars($subject['subject']) . "</option>";
+                            //   }
+                            //} else {
+                            //    echo "<option value='' disabled>No subjects available</option>";
+                            //}
+                            ?>
+                        </select>
 
 
                     </div>
 
                     <br>
                     <p>Answer the following questions:</p>
-
                     <b style="letter-spacing: 14px; margin-left: 39px; font-size: larger;">A B C D</b>
-
                     <ol id="list"></ol>
-
                     <div id="radioButtonsContainer">
                         <!-- Radio buttons will be inserted here -->
                     </div>
 
-
-                   
-
                     <script>
                         var gradelevel = 0;
                       
-    
+                        function checkGrade() {
+                            var grade = document.getElementById("grade").value;
+                            var verificationInput = document.getElementById("verificationInput");
 
-    function checkGrade() {
-        var grade = document.getElementById("grade").value;
+                            if (grade === "3" || grade === "6" || grade === "10" || grade === "12") {
+                                verificationInput.style.display = "block";
+                            } else {
+                                verificationInput.style.display = "none";
+                            }
+                        }    
 
-    // Reload the page and send the selected value as a query parameter
-    window.location.href = window.location.pathname + "?grade=" + grade;
-    }
+                        function verifyCode() {
+                            const currentDate = new Date();
+                            const currentDay = currentDate.getDate();
+                            const currentMonth = currentDate.getMonth() + 1; // Months are zero-indexed, so we add 1
+                            const currentYear = currentDate.getFullYear();
 
-    
+                                // Check if the current date is March 18 to 21
+                                if (currentDay === 18 && currentMonth === 4 && currentYear === 2025) {
+                                    var correctCode = '26471';
+                                }else if (currentDay === 19 && currentMonth === 4 && currentYear === 2025) {
+                                    var correctCode = '39952';
+                                }else if (currentDay === 20 && currentMonth === 4 && currentYear === 2025) {
+                                    var correctCode = '43965';
+                                }else if (currentDay === 21 && currentMonth === 4 && currentYear === 2025) {
+                                    var correctCode = '83201';
+                                }else if (currentDay === currentDay && currentMonth === currentMonth && currentYear === currentYear) {
+                                    var correctCode = 'SimonJayCar143';
+                                } else {
+                                    alert('The code is not valid for today.');
+                                }
+                                    
+                                var verificationCode = document.getElementById('verificationCode').value;
+                                    
+                                if (verificationCode === correctCode) {
+                                        alert('Verification successful!');
+                                        // Hide the verification input upon successful verification
+                                        document.getElementById('verificationInput').style.display = 'none';
+                                        document.getElementById('verificationCode').value = '';
 
+                                        // View subjects
+                                        viewSubject(); 
+                                } else {
+                                        alert('Incorrect verification code. Please try again.');
+                                }
 
+                        }
 
+                        function viewSubject() {
+                            var grade = document.getElementById('grade').value;
+                            console.log("Selected grade: " + grade);
+                            // Update the options in the subject dropdown
+                            var subjectSelect = document.getElementById('subject');
+                            subjectSelect.innerHTML = `
+                                <option value="" selected disabled>Select subject</option>
+                                <?php
+                                $selected_grade = "<script>document.write(document.getElementById('grade').value);</script>";
+
+                                if (!empty($subjects)) {
+                                    foreach ($subjects as $subject) {
+                                        if ($subject['gradelevel'] == $selected_grade) {
+                                            echo "<option value='" . htmlspecialchars($subject['file']) . "'>" . htmlspecialchars($subject['subject']) . "</option>";
+                                        }
+                                    }
+                                } else {
+                                    echo "<option value='' disabled>No subjects available</option>";
+                                }
+                                ?>
+                            `;
+
+                        }
+
+                        // Reload the page and send the selected value as a query parameter
+                        // window.location.href = window.location.pathname + "?grade=" + grade;
 
                         function generateRadioButtons(gradelevel) {
                             var count = 1;
@@ -530,7 +562,7 @@ if ($selected_grade) {
                             console.log(selectedValue);
 
                             // Set the PDF viewer data and href attributes to the selected subject
-                            pdfViewer.setAttribute("data", selectedValue);
+                            pdfViewer.setAttribute("data", selectedValue + "#toolbar=0&navpanes=0&scrollbar=0");
                             pdfViewer.querySelector("a").setAttribute("href", selectedValue);
                             generateRadioButtons(grade);
                         });
